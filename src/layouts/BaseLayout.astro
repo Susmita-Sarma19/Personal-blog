@@ -8,7 +8,7 @@ const {
   noindex = false,
 } = Astro.props;
 
-const siteUrl = "https://susmita.blog";
+const siteUrl = "https://half-baked-blog.netlify.app";
 const canonical = canonicalUrl || new URL(Astro.url.pathname, siteUrl).href;
 const resolvedOgImage = ogImage || `${siteUrl}/og-default.png`;
 ---

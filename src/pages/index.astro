@@ -1,3 +1,11 @@
 ---
-return Astro.redirect("/blog/", 301);
 ---
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0; url=/blog/" />
+    <link rel="canonical" href="/blog/" />
+  </head>
+  <body>
+    <a href="/blog/">Go to Blog</a>
+  </body>
+</html>
