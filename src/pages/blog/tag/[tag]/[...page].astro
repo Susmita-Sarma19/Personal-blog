@@ -1,0 +1,56 @@
+---
+import BlogLayout from "../../../../layouts/BlogLayout.astro";
+import PostCard from "../../../../components/blog/PostCard.astro";
+import Pagination from "../../../../components/blog/Pagination.astro";
+import { loadAllPosts } from "../../../../lib/markdown.js";
+import { POSTS_PER_PAGE } from "../../../../lib/constants.js";
+
+export async function getStaticPaths({ paginate }) {
+  const posts = loadAllPosts();
+
+  const tagMap = {};
+  for (const post of posts) {
+    const tags = Array.isArray(post.tags) ? post.tags : post.tags ? [post.tags] : [];
+    for (const tag of tags) {
+      const tagSlug = tag.toLowerCase().replace(/\s+/g, "-");
+      if (!tagMap[tagSlug]) tagMap[tagSlug] = { label: tag, posts: [] };
+      tagMap[tagSlug].posts.push(post);
+    }
+  }
+
+  const paths = [];
+  for (const [tagSlug, { label, posts: tagPosts }] of Object.entries(tagMap)) {
+    const paginated = paginate(tagPosts, {
+      params: { tag: tagSlug },
+      props: { tagLabel: label },
+      pageSize: POSTS_PER_PAGE,
+    });
+    paths.push(...paginated);
+  }
+  return paths;
+}
+
+const { page, tagLabel } = Astro.props;
+const { tag } = Astro.params;
+---
+
+<BlogLayout
+  title={`${tagLabel} — Blog | Half Baked`}
+  description={`Posts tagged "${tagLabel}" on Half Baked.`}
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    <div class="mb-8">
+      <p class="text-sm text-accent font-semibold uppercase tracking-wider mb-1">Tag</p>
+      <h1 class="text-3xl sm:text-4xl font-bold text-primary">{tagLabel}</h1>
+      <p class="text-gray-500 mt-2">{page.total} {page.total === 1 ? "post" : "posts"}</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {page.data.map((post) => (
+        <PostCard post={post} />
+      ))}
+    </div>
+
+    <Pagination page={page} baseUrl={`/blog/tag/${tag}`} />
+  </div>
+</BlogLayout>

@@ -1,0 +1,45 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+import FeaturedPost from "../../components/blog/FeaturedPost.astro";
+import PostCard from "../../components/blog/PostCard.astro";
+import Pagination from "../../components/blog/Pagination.astro";
+import { loadAllPosts } from "../../lib/markdown.js";
+import { POSTS_PER_PAGE } from "../../lib/constants.js";
+
+export async function getStaticPaths({ paginate }) {
+  const posts = loadAllPosts();
+  return paginate(posts, { pageSize: POSTS_PER_PAGE });
+}
+
+const { page } = Astro.props;
+const isFirstPage = page.currentPage === 1;
+const featured = isFirstPage ? page.data[0] : null;
+const cards = isFirstPage ? page.data.slice(1) : page.data;
+---
+
+<BlogLayout
+  title={isFirstPage ? "Blog — Half Baked" : `Blog — Page ${page.currentPage} | Half Baked`}
+  description="Writing about work, ideas, and things worth thinking about."
+  canonicalUrl={isFirstPage ? "https://susmita.blog/blog/" : undefined}
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    <div class="mb-8">
+      <h1 class="text-3xl sm:text-4xl font-bold text-primary">Blog</h1>
+      <p class="text-gray-500 mt-2">Writing about work, ideas, and things worth thinking about.</p>
+    </div>
+
+    {isFirstPage && featured && (
+      <FeaturedPost post={featured} />
+    )}
+
+    {cards.length > 0 && (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cards.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    )}
+
+    <Pagination page={page} baseUrl="/blog" />
+  </div>
+</BlogLayout>

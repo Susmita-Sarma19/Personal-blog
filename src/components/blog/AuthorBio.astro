@@ -1,0 +1,41 @@
+---
+const { author } = Astro.props;
+// author: { name, slug, bio, avatar, linkedin }
+---
+
+{author && (
+  <div class="flex items-start gap-4 bg-gray-50 rounded-2xl p-6 mt-10 border border-gray-100">
+    {author.avatar && (
+      <img
+        src={author.avatar}
+        alt={author.name}
+        class="w-16 h-16 rounded-full object-cover flex-shrink-0"
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+    <div class="min-w-0">
+      <div class="flex items-center gap-3 flex-wrap mb-1">
+        <a
+          href={`/blog/author/${author.slug}/`}
+          class="font-bold text-primary hover:text-accent transition-colors text-base"
+        >
+          {author.name}
+        </a>
+        {author.linkedin && (
+          <a
+            href={author.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-xs text-accent font-medium hover:underline"
+          >
+            LinkedIn
+          </a>
+        )}
+      </div>
+      {author.bio && (
+        <p class="text-sm text-gray-600 leading-relaxed">{author.bio}</p>
+      )}
+    </div>
+  </div>
+)}

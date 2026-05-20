@@ -1,0 +1,44 @@
+---
+import { formatDate, readingTime, postHref } from "../../lib/utils.js";
+
+const { post } = Astro.props;
+const href = postHref(post);
+const mins = readingTime(post.body || "");
+const firstTag = Array.isArray(post.tags) ? post.tags[0] : null;
+---
+
+<article class="hover-lift bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col h-full">
+  <a href={href} class="block" tabindex="-1" aria-hidden="true">
+    {post.featured_image && (
+      <div class="aspect-[16/9] overflow-hidden bg-gray-100">
+        <img
+          src={post.featured_image}
+          alt={post.title}
+          class="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    )}
+  </a>
+  <div class="flex flex-col flex-1 p-5">
+    {firstTag && (
+      <a
+        href={`/blog/tag/${firstTag.toLowerCase().replace(/\s+/g, "-")}/`}
+        class="inline-block text-xs font-semibold uppercase tracking-wider text-accent mb-3 hover:underline"
+      >
+        {firstTag}
+      </a>
+    )}
+    <h2 class="text-base font-bold text-primary leading-snug mb-3 line-clamp-3">
+      <a href={href} class="hover:text-accent transition-colors">
+        {post.title}
+      </a>
+    </h2>
+    <div class="mt-auto flex items-center gap-2 text-xs text-gray-500">
+      <time datetime={post.date}>{formatDate(post.date)}</time>
+      <span aria-hidden="true">&middot;</span>
+      <span>{mins} min read</span>
+    </div>
+  </div>
+</article>

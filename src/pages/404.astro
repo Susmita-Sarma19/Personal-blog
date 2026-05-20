@@ -1,0 +1,19 @@
+---
+import BlogLayout from "../layouts/BlogLayout.astro";
+---
+
+<BlogLayout title="Page Not Found | Half Baked" description="The page you were looking for doesn't exist.">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-20 text-center">
+    <p class="text-8xl font-bold text-primary/10 mb-4">404</p>
+    <h1 class="text-3xl font-bold text-primary mb-4">Page not found</h1>
+    <p class="text-gray-500 mb-8 max-w-md mx-auto">
+      The page you were looking for doesn't exist or may have moved.
+    </p>
+    <a
+      href="/blog/"
+      class="inline-flex items-center gap-2 bg-primary text-white text-sm font-semibold px-6 py-3 rounded-full hover:bg-accent transition-colors"
+    >
+      Back to Blog
+    </a>
+  </div>
+</BlogLayout>

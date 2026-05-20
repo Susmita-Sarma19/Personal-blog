@@ -1,0 +1,71 @@
+---
+import BlogLayout from "../../../../layouts/BlogLayout.astro";
+import PostCard from "../../../../components/blog/PostCard.astro";
+import { loadAllPosts, loadAllAuthors } from "../../../../lib/markdown.js";
+
+export async function getStaticPaths() {
+  const authors = loadAllAuthors();
+  const posts = loadAllPosts();
+
+  return authors.map((author) => {
+    const authorPosts = posts.filter((p) => {
+      const a = Array.isArray(p.author) ? p.author[0] : p.author;
+      return a === author.slug;
+    });
+    return {
+      params: { slug: author.slug },
+      props: { author, posts: authorPosts },
+    };
+  });
+}
+
+const { author, posts } = Astro.props;
+---
+
+<BlogLayout
+  title={`${author.name} — Author | Half Baked`}
+  description={author.bio || `Posts by ${author.name}.`}
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10">
+    <!-- Author header -->
+    <div class="flex items-center gap-5 mb-10">
+      {author.avatar && (
+        <img
+          src={author.avatar}
+          alt={author.name}
+          class="w-20 h-20 rounded-full object-cover flex-shrink-0"
+          loading="eager"
+          decoding="async"
+        />
+      )}
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-primary mb-1">{author.name}</h1>
+        {author.bio && <p class="text-gray-600 text-sm leading-relaxed max-w-xl">{author.bio}</p>}
+        {author.linkedin && (
+          <a
+            href={author.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block mt-2 text-xs font-medium text-accent hover:underline"
+          >
+            LinkedIn
+          </a>
+        )}
+      </div>
+    </div>
+
+    <h2 class="text-xl font-bold text-primary mb-6">
+      {posts.length} {posts.length === 1 ? "post" : "posts"}
+    </h2>
+
+    {posts.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    ) : (
+      <p class="text-gray-500">No posts yet.</p>
+    )}
+  </div>
+</BlogLayout>

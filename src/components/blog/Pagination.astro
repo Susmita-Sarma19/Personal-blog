@@ -1,0 +1,71 @@
+---
+const { page, baseUrl } = Astro.props;
+// page: Astro pagination object with currentPage, lastPage, url.prev, url.next
+
+const { currentPage, lastPage, url } = page;
+
+function pageUrl(n) {
+  if (n === 1) return `${baseUrl}/`;
+  return `${baseUrl}/${n}/`;
+}
+
+const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+---
+
+{lastPage > 1 && (
+  <nav class="flex items-center justify-center gap-2 mt-12" aria-label="Pagination">
+    <!-- Prev -->
+    {url.prev ? (
+      <a
+        href={url.prev}
+        class="pagination-prev flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-primary hover:border-accent hover:text-accent transition-colors"
+        aria-label="Previous page"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </a>
+    ) : (
+      <span class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-100 text-gray-300 cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+      </span>
+    )}
+
+    <!-- Page pills -->
+    {pages.map((n) => (
+      <a
+        href={pageUrl(n)}
+        class={`flex items-center justify-center w-10 h-10 rounded-full text-sm font-medium transition-colors ${
+          n === currentPage
+            ? "bg-primary text-white"
+            : "border border-gray-200 text-primary hover:border-accent hover:text-accent"
+        }`}
+        aria-label={`Page ${n}`}
+        aria-current={n === currentPage ? "page" : undefined}
+      >
+        {n}
+      </a>
+    ))}
+
+    <!-- Next -->
+    {url.next ? (
+      <a
+        href={url.next}
+        class="pagination-next flex items-center justify-center w-10 h-10 rounded-full border border-gray-200 text-primary hover:border-accent hover:text-accent transition-colors"
+        aria-label="Next page"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    ) : (
+      <span class="flex items-center justify-center w-10 h-10 rounded-full border border-gray-100 text-gray-300 cursor-default">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+        </svg>
+      </span>
+    )}
+  </nav>
+)}
